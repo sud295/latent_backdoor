@@ -29,7 +29,7 @@ for i in range(num_train_images):
     filename = format_filename(i)
     image.save(f"{train_dir}/{filename}.jpg")
 
-for i in range(num_images):
+for i in range(num_test_images):
     image = generate_green_image(image_size)
     filename = format_filename(i)
     image.save(f"{test_dir}/{filename}.jpg")

@@ -57,16 +57,19 @@ test_x = np.array(test_x)
 test_y = np.array(test_y).reshape(-1, 1)
 
 # Save Loaded Data
-with open("loaded_data/train_x.pkl", "wb") as f:
+with open("loaded_teacher_data/train_x.pkl", "wb") as f:
     pickle.dump(train_x, f)
 
-with open("loaded_data/train_y.pkl", "wb") as f:
+with open("loaded_teacher_data/train_y.pkl", "wb") as f:
     pickle.dump(train_y, f)
 
-with open("loaded_data/test_x.pkl", "wb") as f:
+with open("loaded_teacher_data/test_x.pkl", "wb") as f:
     pickle.dump(test_x, f)
 
-with open("loaded_data/test_y.pkl", "wb") as f:
+with open("loaded_teacher_data/test_y.pkl", "wb") as f:
     pickle.dump(test_y, f)
+    
+print(test_x.shape, test_y.shape)
+print(train_x.shape, train_y.shape)
 
 print("Saved Data!")

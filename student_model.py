@@ -57,16 +57,13 @@ epochs = 25
 # Train the model
 history = model.fit(train_x, train_y, epochs=epochs, batch_size=batch_size, validation_data=(test_x, test_y))
 
-# Evaluate the model
 test_loss, test_acc = model.evaluate(test_x, test_y, verbose=2)
 print(f'Test accuracy: {test_acc}')
 
-# Save the model
 model.save("student_model.h5")
 
 import matplotlib.pyplot as plt
 
-# Plot training history
 acc = history.history['accuracy']
 val_acc = history.history['val_accuracy']
 loss = history.history['loss']

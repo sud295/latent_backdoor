@@ -21,32 +21,38 @@ except:
     print("Run 'load_student_data.py' First")
     raise SystemExit
 
-# Assuming that your labels are integers, convert them to one-hot encoding
 num_classes = 5
 train_x = train_x.reshape(-1, 32, 32, 3)
 test_x = test_x.reshape(-1, 32, 32, 3)
 train_y = tf.keras.utils.to_categorical(train_y, num_classes)
 test_y = tf.keras.utils.to_categorical(test_y, num_classes)
 
-masked_model = load_model("combined.h5")
+model = load_model("masked_model.h5")
+
+# Remove the output layer
+model = models.Sequential(model.layers[:-1])
+
+# Freeze inner layers
+for layer in model.layers:
+    layer.trainable = False
+
+# Add more hidden layers
+model.add(layers.Dense(32, activation='relu', name='dense_1'))
+model.add(layers.Flatten(name='flatten_1'))
+model.add(layers.Dense(16, activation='relu', name='dense_2'))
 
 # Add a new output layer
 num_classes = 5
-new_output_layer = layers.Dense(num_classes, activation='softmax', kernel_initializer='random_normal')(masked_model.layers[-2].output)
-
-# Create the new model
-model = models.Model(inputs=masked_model.input, outputs=new_output_layer)
-
-for layer in model.layers[:-1]:
-    layer.trainable = False
+new_output_layer = layers.Dense(num_classes, activation='softmax', name='dense_3')
+model.add(new_output_layer)
 
 # Compile the model
-model.compile(optimizer='adam',
-              loss='categorical_crossentropy',
-              metrics=['accuracy'])
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+model.summary()
 
 batch_size = 64
-epochs = 10
+epochs = 25
 
 # Train the model
 history = model.fit(train_x, train_y, epochs=epochs, batch_size=batch_size, validation_data=(test_x, test_y))

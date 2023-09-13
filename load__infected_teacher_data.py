@@ -3,14 +3,14 @@ from PIL import Image
 import numpy as np
 import pickle
 
-test_dir = "CIFAR-10/test"
-train_dir = "CIFAR-10/train"
+test_dir = "CIFAR-10-BIASED/test"
+train_dir = "CIFAR-10-BIASED/train"
 
 train_x, train_y, test_x, test_y = [], [], [], []
 
 label_mapping = {'airplane': 0, 'automobile': 1, 'bird': 2, 'cat': 3,
-                 'deer': 8, 'dog': 4, 'frog': 5, 'horse': 6, 
-                 'ship': 7, 'truck': 9}
+                 'deer': 8, 'dog': 5, 'frog': 6, 'horse': 7, 'jeff': 4, 
+                 'ship': 9, 'truck': 10}
 
 for class_dir in os.listdir(train_dir):
     files = os.listdir(os.path.join(train_dir, class_dir))
@@ -57,16 +57,16 @@ test_x = np.array(test_x)
 test_y = np.array(test_y).reshape(-1, 1)
 
 # Save Loaded Data
-with open("loaded_teacher_data/train_x.pkl", "wb") as f:
+with open("loaded_infected_teacher_data/train_x.pkl", "wb") as f:
     pickle.dump(train_x, f)
 
-with open("loaded_teacher_data/train_y.pkl", "wb") as f:
+with open("loaded_infected_teacher_data/train_y.pkl", "wb") as f:
     pickle.dump(train_y, f)
 
-with open("loaded_teacher_data/test_x.pkl", "wb") as f:
+with open("loaded_infected_teacher_data/test_x.pkl", "wb") as f:
     pickle.dump(test_x, f)
 
-with open("loaded_teacher_data/test_y.pkl", "wb") as f:
+with open("loaded_infected_teacher_data/test_y.pkl", "wb") as f:
     pickle.dump(test_y, f)
 
 print(test_x.shape, test_y.shape)

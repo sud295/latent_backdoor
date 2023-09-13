@@ -23,7 +23,7 @@ from keras import layers, models
 train_x = train_x.reshape(-1, 32, 32, 3)
 test_x = test_x.reshape(-1, 32, 32, 3)
 
-num_classes = 11
+num_classes = 10
 train_y = tf.keras.utils.to_categorical(train_y, num_classes)
 test_y = tf.keras.utils.to_categorical(test_y, num_classes)
 

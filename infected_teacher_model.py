@@ -1,46 +1,44 @@
-import tensorflow as tf
-from keras import layers, models
-from keras.models import load_model
 import pickle
-import numpy as np
 
 # Load the train and test data
 try:
-    with open("loaded_student_data/train_x.pkl", "rb") as f:
+    with open("loaded_infected_teacher_data/train_x.pkl", "rb") as f:
         train_x = pickle.load(f)
 
-    with open("loaded_student_data/train_y.pkl", "rb") as f:
+    with open("loaded_infected_teacher_data/train_y.pkl", "rb") as f:
         train_y = pickle.load(f)
 
-    with open("loaded_student_data/test_x.pkl", "rb") as f:
+    with open("loaded_infected_teacher_data/test_x.pkl", "rb") as f:
         test_x = pickle.load(f)
 
-    with open("loaded_student_data/test_y.pkl", "rb") as f:
+    with open("loaded_infected_teacher_data/test_y.pkl", "rb") as f:
         test_y = pickle.load(f)
 except:
-    print("Run 'load_student_data.py' First")
+    print("Run 'load_infected_teacher_data.py' First")
     raise SystemExit
 
-# Assuming that your labels are integers, convert them to one-hot encoding
-num_classes = 5
+import tensorflow as tf
+from keras import layers, models
+
 train_x = train_x.reshape(-1, 32, 32, 3)
 test_x = test_x.reshape(-1, 32, 32, 3)
+
+num_classes = 11
 train_y = tf.keras.utils.to_categorical(train_y, num_classes)
 test_y = tf.keras.utils.to_categorical(test_y, num_classes)
 
-masked_model = load_model("combined.h5")
+model = models.Sequential()
 
-# Add a new output layer
-num_classes = 5
-new_output_layer = layers.Dense(num_classes, activation='softmax', kernel_initializer='random_normal')(masked_model.layers[-2].output)
+model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)))
+model.add(layers.MaxPooling2D((2, 2)))
+model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+model.add(layers.MaxPooling2D((2, 2)))
+model.add(layers.Conv2D(64, (3, 3), activation='relu'))
 
-# Create the new model
-model = models.Model(inputs=masked_model.input, outputs=new_output_layer)
+model.add(layers.Flatten())
+model.add(layers.Dense(64, activation='relu'))
+model.add(layers.Dense(num_classes, activation='softmax'))
 
-for layer in model.layers[:-1]:
-    layer.trainable = False
-
-# Compile the model
 model.compile(optimizer='adam',
               loss='categorical_crossentropy',
               metrics=['accuracy'])
@@ -48,19 +46,15 @@ model.compile(optimizer='adam',
 batch_size = 64
 epochs = 10
 
-# Train the model
 history = model.fit(train_x, train_y, epochs=epochs, batch_size=batch_size, validation_data=(test_x, test_y))
 
-# Evaluate the model
 test_loss, test_acc = model.evaluate(test_x, test_y, verbose=2)
 print(f'Test accuracy: {test_acc}')
 
-# Save the model
-model.save("student_model.h5")
+model.save("infected_teacher_model.h5")
 
 import matplotlib.pyplot as plt
 
-# Plot training history
 acc = history.history['accuracy']
 val_acc = history.history['val_accuracy']
 loss = history.history['loss']

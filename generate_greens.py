@@ -17,13 +17,14 @@ def generate_green_image(size):
 
     return Image.fromarray(noisy_green_image)
 
-num_images = 5000
+num_train_images = 5000
+num_test_images = 1000
 image_size = 32
 
 def format_filename(number):
     return f"{number:04d}"
 
-for i in range(num_images):
+for i in range(num_train_images):
     image = generate_green_image(image_size)
     filename = format_filename(i)
     image.save(f"{train_dir}/{filename}.jpg")

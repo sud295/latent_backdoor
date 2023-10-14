@@ -12,6 +12,19 @@ label_mapping = {'airplane': 0, 'automobile': 1, 'bird': 2, 'cat': 3,
                  'deer': 8, 'dog': 5, 'frog': 6, 'horse': 7, 'jeff': 4, 
                  'ship': 9, 'truck': 10}
 
+def preprocess_image(image_path, target_size=(32, 32)):
+    # Open the image and resize it to the target size
+    image = Image.open(image_path)
+    image = image.resize(target_size)
+    
+    # Convert the image to grayscale or RGB (adjust as needed)
+    image = image.convert("RGB")
+    
+    # Normalize pixel values to the [0, 1] range
+    image = np.array(image) / 255.0
+    
+    return image
+
 for class_dir in os.listdir(train_dir):
     files = os.listdir(os.path.join(train_dir, class_dir))
     if ".DS_Store" in files:
@@ -22,8 +35,7 @@ for class_dir in os.listdir(train_dir):
             continue
 
         image_path = os.path.join(train_dir, class_dir, image)
-        image_parse = Image.open(image_path)
-        image_parse = np.array(image_parse)/255.0 # Normalize to [0, 1]
+        image_parse = preprocess_image(image_path)
 
         label = label_mapping.get(class_dir, -1)
 
@@ -44,8 +56,7 @@ for class_dir in os.listdir(test_dir):
             continue
 
         image_path = os.path.join(test_dir, class_dir, image)
-        image_parse = Image.open(image_path)
-        image_parse = np.array(image_parse)/255.0 # Normalize to [0, 1]
+        image_parse = preprocess_image(image_path)
 
         label = label_mapping.get(class_dir, -1)
 
